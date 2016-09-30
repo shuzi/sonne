@@ -1,25 +1,18 @@
 
-dd = npy4th.loadnpy(opt.path .. 'SPEED_CROSS.npy')
+dd = npy4th.loadnpy('/DT/SPEED_CROSS.npy')
 y = {}
 for i=1,dd:size(1) do y[dd[i][1]] = dd[i][2] end
-
-dd = npy4th.loadnpy(opt.path .. 'sun_SPEED_CROSS.npy')
-s={}
-for i=1,dd:size(1) do s[dd[i][1]] = dd[{i,{2,3}}] end
-
-
 
 dir = opt.path .. 'train/'
 n=1
 for k,v in pairs(paths.dir(dir)) do
---        if n >5 then goto continue end
         if v == '.' then goto continue end
         if v == '..' then goto continue end
         ts = tonumber(v:match('%d+'))
         train_x[n] = npy4th.loadnpy(dir .. v)
         train_x[n] = train_x[n]:transpose(1,2):contiguous():float()
-        train_xsun[n] = s[ts]:cuda()
         train_y[n] = torch.Tensor{y[ts]}:cuda()
+        print( train_y[n])
         n = n+1
         ::continue::
 end
@@ -27,13 +20,11 @@ end
 dir = opt.path .. 'test/'
 n=1
 for k,v in pairs(paths.dir(dir)) do
---        if n >5 then goto continue end
         if v == '.' then goto continue end
         if v == '..' then goto continue end
         ts = tonumber(v:match('%d+'))
         test_x[n] = npy4th.loadnpy(dir .. v)
         test_x[n] = test_x[n]:transpose(1,2):contiguous():float()
-        test_xsun[n] = s[ts]:cuda()
         test_y[n] = torch.Tensor{y[ts]}:cuda()
         n = n+1
         ::continue::
@@ -42,13 +33,11 @@ end
 dir = opt.path .. 'valid/'
 n=1
 for k,v in pairs(paths.dir(dir)) do
---        if n >5 then goto continue end
         if v == '.' then goto continue end
         if v == '..' then goto continue end
         ts = tonumber(v:match('%d+'))
         valid_x[n] = npy4th.loadnpy(dir .. v)
         valid_x[n] = valid_x[n]:transpose(1,2):contiguous():float()
-        valid_xsun[n] = s[ts]:cuda()
         valid_y[n] = torch.Tensor{y[ts]}:cuda()
         n = n+1
         ::continue::

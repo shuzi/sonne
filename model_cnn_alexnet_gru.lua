@@ -1,5 +1,5 @@
 model = nn.Sequential()
-model:add(nn.VolumetricConvolution(10, 160, 1, 11, 11, 1, 4, 4, 0, 2, 2))
+model:add(nn.VolumetricConvolution(opt.inputfeatures, 160, 1, 11, 11, 1, 4, 4, 0, 2, 2))
 model:add(nn.ReLU(true))
 model:add(nn.VolumetricMaxPooling(1, 3, 3, 1, 2, 2))
 model:add(nn.VolumetricConvolution(160, 480, 1, 5, 5, 1, 1, 1, 0, 2, 2))
@@ -14,14 +14,14 @@ model:add(nn.ReLU(true))
 model:add(nn.VolumetricMaxPooling(1, 3, 3, 1, 2, 2))
 model:add(nn.Transpose({1,2}))
 model:add(nn.View(1, 6, 720*7*4))
-model:add(cudnn.GRU(720*7*4, 5000, 1, true))
+model:add(cudnn.GRU(720*7*4, 3000, 1, true))
 model:add(nn.Max(2))
 --model:add(nn.Select(2,-1))
 model:add(nn.ReLU())
 if opt.dropout > 0 then
   model:add(nn.Dropout(opt.dropout))
 end
-model:add(nn.Linear(5000, 1))
+model:add(nn.Linear(3000, 1))
 
 
 if opt.lossmode == 1 then
